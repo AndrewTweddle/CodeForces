@@ -1,0 +1,60 @@
+==========================
+Language: Scala
+IDE:      IntelliJ Idea CE
+
+Prior to the competition:
+-------------------------
+
+1. Go to folder: CodeForces/$type
+   where: $type=Live|Practice|PostCompetition
+   
+   NB: Don't create sub-folder for the competition yet. Let IntellIJ do that.
+
+2. Use IntelliJ idea to create a new sbt project in this folder.
+    Directory:   CodeForces/$type/$competition
+    ProjectName: $competition
+    Module name: $competition
+	
+   Where $competition is the name of the competition e.g. Round100div2
+   
+   Tick:
+   a. Create directories for empty content roots automatically
+   b. Download: Sources and Sources for SBT and plugins
+   
+   Click Finish and wait a while for IntelliJ to create the required directories, etc.
+   
+   This will create:
+   a. build.sbt
+   b. project/{build.properties, plugins.sbt}
+   c. src/{main|test}/{scala, java, resources}
+
+3. Copy the file Master.scala into src/main/scala
+4. Check that the main/scala folder in IntelliJ's project view is marked as a source folder.
+   If not, right click on it and choose: Mark Directory As > Sources Root.
+   Do the same for test/scala, marking as "Test Sources Root" (if you intend unit testing).
+5. Create a master run configuration to call Master.scala's main() method.
+   a. Right click Master.scala and choose "Create master..."
+6. Optional: copy the ProblemX.scala file and test files from a past project, then:
+   a. make the project
+      i. IF YOU SEE THE FOLLOWING: Warning: scala: skipping Scala files without a Scala SDK in module(s) ...
+         There may be a popup: No Scala SDK on module, with a button on the right: "Setup Scala SDK". Click it.
+   b. set configuration parameters to test the solution.
+   c. run the project to see that they are working.
+7. Optional: Set up ScalaTest unit tests:
+   a. Open sbt window on right edge of IntelliJ.
+   b. Right click in the treeview and choose "Auto import"
+   c. Add the following line to build.sbt:
+        libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.0" % "test"
+   d. Open sbt window and click on the refresh button.
+8. TODO: Optional: Set up ScalaCheck
+
+During the competition:
+=======================
+1. When you want to solve a particular problem using Scala, copy ProblemX.scala and rename to Problem{A|B|C|D|E}.scala
+2. Edit ProblemX.scala to rename the Problem object to ProblemX where X = A|B|C|D
+3. Edit Master.scala's getProblem() function:
+     Uncomment the relevant line (where x is one of a|b|c|d|e and X is the uppercase of x):
+     case "X" => ProblemX
+4. Edit the sample code in Problem{X}.processLines().
+5. TODO: Optional: add ScalaTest unit tests under src/test/scala 
+6. TODO: Optional: describe how to add ScalaCheck code
