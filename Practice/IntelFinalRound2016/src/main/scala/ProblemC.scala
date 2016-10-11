@@ -53,28 +53,29 @@ object ProblemC {
   }
 
   @tailrec
-  def gcd(a: Int, b: Int): Int = if (b == 0) a else gcd(b, a % b)
-  def lcm(a: Int, b: Int): Long = a.toLong * b / gcd(a, b)
+  def gcd(a: Long, b: Long): Long = if (b == 0) a else gcd(b, a % b)
+  def lcm(a: Long, b: Long): Long = a * b / gcd(a, b)
 
   def getShortestTime(n: Int, m: Int, sig: Signal, maxTime: Long): Option[Long] = {
     // Consider the four reflections of the point(x, y) about the centre line of a 2n by 2m box
     // i.e. n +/- (n - x), m +/- (m - y)
-    def timeToReachSignalInBlock(tStartOfBlock: Long): Option[Long] = {
+    @tailrec
+    def timeToReachSignalFromBlock(xBlock: Long): Option[Long] = {
       def isSignalReached(t: Long): Boolean = {
         val yOffsetFromBlock = t % (2 * m)
         (yOffsetFromBlock == sig.y) || (yOffsetFromBlock == 2 * m - sig.y)
       }
-      val xVals = List(tStartOfBlock + sig.x, tStartOfBlock + 2 * n - sig.x)
-      val ttr = xVals.filter(isSignalReached).headOption
-      ttr
+
+      if (xBlock >= maxTime) None else {
+        val t1 = xBlock + sig.x
+        val t2 = xBlock + 2 * n - sig.x
+        if (isSignalReached(t1)) Some(t1) else if (isSignalReached(t2)) Some(t2) else
+          timeToReachSignalFromBlock(xBlock + 2 * n)
+      }
     }
 
     // x and y must be congruent modulo 2 (both even or both odd):
-    if ((sig.x % 2) != (sig.y % 2)) None else {
-      val timesToReach = (0L until maxTime by (2 * n)).toStream.map(timeToReachSignalInBlock)
-      val shortestTime = timesToReach.collectFirst {case Some(t) => t }
-      shortestTime
-    }
+    if ((sig.x % 2) != (sig.y % 2)) None else timeToReachSignalFromBlock(0)
   }
 
   def solve(n: Int, m: Int, k: Int, signals: Array[Signal]): Array[Option[Long]] = {

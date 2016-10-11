@@ -47,17 +47,17 @@ object Master {
       try {
         // Timing should exclude the time required to read from the standard input stream.
         // So read the lines into a string, then process the string as a stream:
-        val lines = src.getLines().takeWhile(!_.isEmpty).mkString("", "\n", "\n")
+        val lines = src.getLines().takeWhile(!_.isEmpty).mkString("", System.lineSeparator(), System.lineSeparator())
         val stringSrc = Source.fromString(lines)
-        val time = measure {
-          solver.processFromSource(stringSrc)
-        }
+        val time = measure { solver.processFromSource(stringSrc) }
         println()
         println(s"Duration: $time")
       } finally {
         src.close();
       }
-    } else solver.processStdInOut()
+    } else {
+      solver.processStdInOut()
+    }
   }
 
   // To customize, enable relevant problem objects below...
