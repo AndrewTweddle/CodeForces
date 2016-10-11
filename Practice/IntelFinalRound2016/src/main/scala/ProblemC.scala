@@ -1,4 +1,5 @@
 import java.io._
+import scala.io.Source
 
 import scala.annotation.tailrec
 
@@ -6,7 +7,11 @@ object ProblemC {
   def main(args: Array[String]): Unit = processStdInOut()
 
   def processStdInOut(): Unit = {
-    val src = io.Source.fromInputStream(System.in)
+    val src = Source.fromInputStream(System.in)
+    processFromSource(src)
+  }
+
+  def processFromSource(src: Source): Unit = {
     try {
       val bw = new BufferedWriter(new OutputStreamWriter(System.out));
       try {
@@ -14,7 +19,6 @@ object ProblemC {
         processLines(lines, bw)
       } finally {
         bw.flush()
-        bw.close()
       }
     } finally {
       src.close();
@@ -74,11 +78,12 @@ object ProblemC {
   }
 
   def solve(n: Int, m: Int, k: Int, signals: Array[Signal]): Array[Option[Long]] = {
-    if (n < m) {
-      // Performance is better if we jump up by the larger of (n, m) so swap axes if n < m:
+    if (n > m) {
+      // Switch axes if n > m, so that we don't accidentally skip blocks:
       def swapAxis(sig: Signal) = sig.copy(x = sig.y, y = sig.x)
       solve(m, n, k, signals.map(swapAxis))
     } else {
+      // Iterate through blocks of size n by n, where n < m:
       val rayTime = lcm(n, m)
       val shortestTimes = signals.map(getShortestTime(n, m, _, rayTime))
       shortestTimes
