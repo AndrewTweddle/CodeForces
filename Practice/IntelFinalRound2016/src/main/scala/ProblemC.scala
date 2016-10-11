@@ -65,9 +65,11 @@ object ProblemC {
       ttr
     }
 
-    // x and y must be congruent modulo 2:
+    // x and y must be congruent modulo 2 (both even or both odd):
     if ((sig.x % 2) != (sig.y % 2)) None else {
-      (0L until maxTime by (2 * n)).map(timeToReachSignalInBlock).flatten.headOption
+      val timesToReach = (0L until maxTime by (2 * n)).toStream.map(timeToReachSignalInBlock)
+      val shortestTime = timesToReach.collectFirst {case Some(t) => t }
+      shortestTime
     }
   }
 
