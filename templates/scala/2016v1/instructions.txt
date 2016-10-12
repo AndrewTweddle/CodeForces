@@ -40,13 +40,20 @@ Prior to the competition:
          There may be a popup: No Scala SDK on module, with a button on the right: "Setup Scala SDK". Click it.
    b. set configuration parameters to test the solution.
    c. run the project to see that they are working.
-7. Optional: Set up ScalaTest unit tests:
+7. Set up timing using scalameter:
+   a. Open sbt window on right edge of IntelliJ.
+   b. Right click in the treeview and choose "Auto import"
+   c. Add the following line to build.sbt:
+        libraryDependencies += "com.storm-enroute" %% "scalameter-core" % "0.6"
+   d. Open sbt window and click on the refresh button.
+   e. To time execution, set the master configuration parameters to be: <problem> --timer
+8. Optional: Set up ScalaTest unit tests:
    a. Open sbt window on right edge of IntelliJ.
    b. Right click in the treeview and choose "Auto import"
    c. Add the following line to build.sbt:
         libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.0" % "test"
    d. Open sbt window and click on the refresh button.
-8. TODO: Optional: Set up ScalaCheck
+9. TODO: Optional: Set up ScalaCheck
 
 During the competition:
 =======================
@@ -56,5 +63,7 @@ During the competition:
      Uncomment the relevant line (where x is one of a|b|c|d|e and X is the uppercase of x):
      case "X" => ProblemX
 4. Edit the sample code in Problem{X}.processLines().
-5. TODO: Optional: add ScalaTest unit tests under src/test/scala 
-6. TODO: Optional: describe how to add ScalaCheck code
+5. Optional: Consider adding Solution and/or Problem case classes.
+6. To time execution, set the master configuration parameters to be: <problem> --timer
+7. TODO: Optional: add ScalaTest unit tests under src/test/scala 
+8. TODO: Optional: describe how to add ScalaCheck code
