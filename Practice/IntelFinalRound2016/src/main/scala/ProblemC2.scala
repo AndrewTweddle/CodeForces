@@ -79,10 +79,10 @@ object ProblemC2 {
       case _ => false
     }
   }
-  case class Arrow(val position: Point, val direction: Direction, val timeSteps: Long) {
+  case class Arrow(position: Point, direction: Direction, timeSteps: Long) {
     def +(other: Arrow): Arrow = Arrow(other.position, other.direction, this.timeSteps + other.timeSteps)
   }
-  case class SignalFromEdge(val index: Int, arrowToSignal: Arrow)
+  case class SignalFromEdge(index: Int, arrowToSignal: Arrow)
 
   def solve(n: Int, m: Int, k: Int, signals: Array[Point]): Array[Option[Long]] = {
     // Take a starting point and direction, and project to an edge of the n x m box.

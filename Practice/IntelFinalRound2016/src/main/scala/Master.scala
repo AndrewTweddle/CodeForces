@@ -71,6 +71,7 @@ object Master {
       // case "B" => ProblemB
       case "C" => ProblemC
       case "C2" => ProblemC2
+      case "C3" => ProblemC3
       // case "D" => ProblemD
       // case "E" => ProblemE
       case _ => throw new IllegalArgumentException(s"Unsupported problem: $problem")

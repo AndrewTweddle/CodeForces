@@ -63,7 +63,6 @@ object ProblemC {
     def timeToReachSignalFromBlock(xBlock: Long, yOffsetFromPreviousBlock: Int): Option[Long] = {
       def isSignalReached(t: Long, yOffset: Int): Boolean =
         if (t >= maxTime) false else {
-          // val yOffsetFromBlock = yOffsetFromPreviousBlock % (2 * m)
           (yOffset == sig.y) || (yOffset == 2 * m - sig.y)
         }
 
