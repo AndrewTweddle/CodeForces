@@ -60,22 +60,27 @@ object ProblemC {
     // Consider the four reflections of the point(x, y) about the centre line of a 2n by 2m box
     // i.e. n +/- (n - x), m +/- (m - y)
     @tailrec
-    def timeToReachSignalFromBlock(xBlock: Long): Option[Long] = {
-      def isSignalReached(t: Long): Boolean = {
-        val yOffsetFromBlock = t % (2 * m)
-        (yOffsetFromBlock == sig.y) || (yOffsetFromBlock == 2 * m - sig.y)
-      }
+    def timeToReachSignalFromBlock(xBlock: Long, yOffsetFromPreviousBlock: Int): Option[Long] = {
+      def isSignalReached(t: Long, yOffset: Int): Boolean =
+        if (t >= maxTime) false else {
+          // val yOffsetFromBlock = yOffsetFromPreviousBlock % (2 * m)
+          (yOffset == sig.y) || (yOffset == 2 * m - sig.y)
+        }
 
       if (xBlock >= maxTime) None else {
         val t1 = xBlock + sig.x
+        val y1 = (yOffsetFromPreviousBlock + sig.x) % (2 * m)
         val t2 = xBlock + 2 * n - sig.x
-        if (isSignalReached(t1)) Some(t1) else if (isSignalReached(t2)) Some(t2) else
-          timeToReachSignalFromBlock(xBlock + 2 * n)
+        val y2 = (yOffsetFromPreviousBlock + 2 * n - sig.x) % (2 * m)
+        if (isSignalReached(t1, y1)) Some(t1) else if (isSignalReached(t2, y2)) Some(t2) else {
+          val newYOffsetFromPreviousBlock = (yOffsetFromPreviousBlock + 2 * n) % (2 * m)
+          timeToReachSignalFromBlock(xBlock + 2 * n, newYOffsetFromPreviousBlock)
+        }
       }
     }
 
     // x and y must be congruent modulo 2 (both even or both odd):
-    if ((sig.x % 2) != (sig.y % 2)) None else timeToReachSignalFromBlock(0)
+    if ((sig.x % 2) != (sig.y % 2)) None else timeToReachSignalFromBlock(0, 0)
   }
 
   def solve(n: Int, m: Int, k: Int, signals: Array[Signal]): Array[Option[Long]] = {
