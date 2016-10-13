@@ -66,8 +66,8 @@ object ProblemC2 {
     def set(edgePoint: Point, value: T): Unit = { points(pointToIndex(edgePoint)) = value }
     def pointToIndex(edgePoint: Point): Int = edgePoint match {
       case Point(x, 0) => x
-      case Point(x, y) if x == columnCount => rowCount + y
-      case Point(x, y) if y == rowCount    => 2 * rowCount + columnCount - x
+      case Point(x, y) if x == columnCount => columnCount + y
+      case Point(x, y) if y == rowCount    => rowCount + 2 * columnCount - x
       case Point(0, y) => 2 * (rowCount + columnCount) - y
       case _ => throw new IllegalArgumentException(s"Point (${edgePoint.x}, ${edgePoint.y}) is not a border point")
     }
@@ -90,7 +90,7 @@ object ProblemC2 {
     // its direction the reflection of the previous arrow, and with timeSteps
     // based on how long previous arrow travelled for to reach the start of this arrow:
     def projectToBorder(startArrow: Arrow): Arrow = startArrow match {
-      case Arrow(Point(x, y), NorthEast, _) if y >= x     => Arrow(Point(x + m - y, m), SouthEast, m-y)
+      case Arrow(Point(x, y), NorthEast, _) if m - y <= n - x => Arrow(Point(x + m - y, m), SouthEast, m-y)
       case Arrow(Point(x, y), NorthEast, _)               => Arrow(Point(n, y + n - x), NorthWest, n - x)
       case Arrow(Point(x, y), NorthWest, _) if x + y <= m => Arrow(Point(0, y + x), NorthEast, x)
       case Arrow(Point(x, y), NorthWest, _)               => Arrow(Point(x + y - m, m), SouthWest, m - y)
