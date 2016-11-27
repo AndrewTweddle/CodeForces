@@ -27,11 +27,13 @@ object ProblemC {
 
   // Standard code above, custom code below
   def processLines(lines: Iterator[String], bw: BufferedWriter): Unit = {
-    val n = lines.next().toLong
+    val n = lines.next().toDouble
     val log2 = math.log(2)
-    val rounds = math.ceil(math.log(n) / log2) + 0.1
-    // note: bump it slightly in case of round errors like a ?.999999 "integer"
-    bw.write(rounds.toLong.toString)
+    val rounds = math.ceil(math.log(n) / log2).toLong
+    val adjRounds = if (math.pow(2, rounds) < n) rounds + 1
+    else if (math.pow(2, rounds - 1) >= n) rounds - 1
+    else rounds
+    bw.write(adjRounds.toString)
     bw.newLine()
   }
 }
