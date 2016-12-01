@@ -35,16 +35,21 @@ object ProblemC {
 
   def solve(n: Long): Long = {
     @tailrec
-    def loop(minGames: Long, counts: List[Long]): Long = counts match {
-      case 0 :: tl           => loop(minGames + 1, tl)
-      case 1 :: Nil          => minGames
-      case a :: Nil          => loop(minGames, List(a - 2, 1))
-      case 1 :: 1 :: Nil     => minGames + 2
-      case 1 :: 1 :: c :: tl => loop(minGames + 2, (c + 1) :: tl)
-      case a :: 1 :: tl      => loop(minGames, (a - 2) :: 2l :: tl)
-      case a :: b :: Nil     => loop(minGames, List(a - 1, b - 1, 1))
-      case a :: b :: c :: tl => loop(minGames, (a - 1) :: (b - 1) :: (c + 1) :: tl)
-      case Nil => 0
+    def loop(minGames: Int, counts: List[Long]): Long = {
+      val fullList: List[Long] = List.fill[Long](minGames)(0L) ++ counts
+      println(fullList.mkString(", "))
+      counts match {
+        case 0 :: tl           => loop(minGames + 1, tl)
+        case 1 :: Nil          => minGames
+        case a :: Nil          => loop(minGames, List(a - 2, 1))
+        case 1 :: 1 :: Nil     => minGames + 2
+        case 1 :: 1 :: c :: tl => loop(minGames + 2, (c + 1) :: tl)
+        case 2 :: 1 :: tl      => loop(minGames + 1, 2 :: tl)  // Don't leave an "orphaned" player
+        case a :: 0 :: tl      => loop(minGames, (a - 2) :: 1l :: tl)
+        case a :: b :: Nil     => loop(minGames, List(a - 1, b - 1, 1))
+        case a :: b :: c :: tl => loop(minGames, (a - 1) :: (b - 1) :: (c + 1) :: tl)
+        case Nil               => 0
+      }
     }
 
     val maxGamesPlayed = loop(0, List(n))
