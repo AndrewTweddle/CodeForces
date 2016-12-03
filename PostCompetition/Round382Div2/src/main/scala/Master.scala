@@ -68,6 +68,7 @@ object Master {
   } = {
     problem match {
       case "C" => ProblemC
+      case "CFIB" => ProblemCFib
       case _ => throw new IllegalArgumentException(s"Unsupported problem: $problem")
     }
   }
