@@ -1,0 +1,40 @@
+Problem B:
+----------
+
+Test case:
+----------
+
+1. Equal unique words, even number of shared words
+
+3 3
+a
+b
+c
+b
+c
+d
+
+NO
+
+2. Equal unique words, odd number of shared words
+
+3 3
+a
+b
+c
+d
+c
+e
+
+YES
+
+3. One less unique word, odd number of shared words
+
+2 3
+b
+a
+b
+c
+d
+
+NO
