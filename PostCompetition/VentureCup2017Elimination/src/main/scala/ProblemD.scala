@@ -32,59 +32,29 @@ object ProblemD {
     val line = lines.next()
     val nk = line.split(" ").map(_.toInt)
     val (n, k) = (nk(0), nk(1))
-    writeSolution(bw, n, k)
-    /*
-    val soln = solve(n, k)
-    bw.write(soln.mkString(" "))
-    */
+    if (k > n / 2)
+      writeSolution(bw, n, n - k)  // always cycle around in increasing order, as the algorithm assumes this
+    else
+      writeSolution(bw, n, k)
     bw.newLine()
   }
 
   def writeSolution(bw: BufferedWriter, n: Int, k: Int): Unit = {
-    val isVisited = new Array[Boolean](k)
-    isVisited(0) = true
 
     @tailrec
-    def writeVertices(currTotal: Long, currX: Int): Unit = {
-      if (currX != 0) {
-        if (currX < k) {
-          isVisited(currX) = true
-        }
-        val linesCrossed: Int = ((currX + 1) to (currX + k - 1)).map { (vertex: Int) =>
-          if (isVisited((vertex % n) % k)) {
-            if (vertex == n) 1 else 2
-          }
-          else 0
-        }.sum
-        val newTotal = currTotal + linesCrossed
-        bw.write(newTotal.toString)
-        bw.write(" ")
-        writeVertices(newTotal, (currX + k) % n)
+    def writeVertices(currTotal: Long, currCrossings: Long, currX: Long): Unit = {
+      val newX = (currX + k - 1) % n + 1
+      val crossingAdjustment = if (newX > 1 && newX <= k) 1 else 0
+      val newCrossings = currCrossings + crossingAdjustment
+      val newTotal = currTotal + 2 * newCrossings + 1 - crossingAdjustment
+      bw.write(newTotal.toString)
+      bw.write(" ")
+      if (newX != 1) {
+        writeVertices(newTotal, newCrossings, newX)
       }
     }
 
-    writeVertices(1L, k)
+    writeVertices(1L, 0L, 1L)
   }
 
-  /*
-  def solve(n: Int, k: Int): IndexedSeq[BigInt] = {
-    val isVisited = mutable.Set[Int]()
-
-    def countSectionsAfterNextLine(currTotal: BigInt, x : Long): BigInt = {
-      val currX = (x % n).toInt
-      isVisited.add(currX)
-      val newX = currX + k
-      val linesCrossed: Int = ((currX + 1) to (newX - 1)).map { (vertex: Int) =>
-          if (isVisited(vertex % n)) {
-            if (vertex == n) 1 else 2
-          }
-          else 0
-      }.sum
-      currTotal + 1 + linesCrossed
-    }
-
-    val answers = (0L until (n.toLong * k) by k).scanLeft(BigInt(1))(countSectionsAfterNextLine)
-    answers.drop(1)
-  }
-  */
 }
