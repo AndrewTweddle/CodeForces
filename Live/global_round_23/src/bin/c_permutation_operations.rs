@@ -51,6 +51,6 @@ fn main() {
         for _ in i..n {
             write!(bw, " {}", n).unwrap();
         }
-        writeln!(bw, "").unwrap();
+        writeln!(bw).unwrap();
     }
 }
