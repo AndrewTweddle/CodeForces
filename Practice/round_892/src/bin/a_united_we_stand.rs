@@ -23,10 +23,10 @@ fn solve(mut line_iter: impl Iterator<Item = String>, outputs: &mut impl Write) 
         a_sorted.sort();
         let min = *a_sorted.first().unwrap();
         let max = *a_sorted.last().unwrap();
-        let median = a_sorted[a_sorted.len() / 2];
-        if min == median && min == max {
+        if min == max {
             writeln!(outputs, "-1").unwrap();
         } else {
+            let median = a_sorted[a_sorted.len() / 2];
             let (b, c): (Vec<u64>, Vec<u64>) = if median > min {
                 a.iter().partition(|&i| *i < median)
             } else {
