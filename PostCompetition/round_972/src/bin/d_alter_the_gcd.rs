@@ -57,13 +57,35 @@ fn solve(n: usize, a: Vec<u32>, b: Vec<u32>) -> (u32, usize) {
     for l in 1..=n {
         let a_left_gcd = a_cache.get_gcds_between_indices_inclusively(0, l - 1);
         let b_left_gcd = b_cache.get_gcds_between_indices_inclusively(0, l - 1);
+        // gcd's only get smaller as we consider more options, so exit early
+        // whenever there is no chance of finding a better result.
+        // The exception is when a gcd is zero (i.e. ignored), so also check for this.
+        if a_left_gcd > 0 && b_left_gcd >0 && a_left_gcd + b_left_gcd < best_sum_of_gcds {
+            continue;
+        }
         for r in l..=n {
-            let a_mid_gcd = a_cache.get_gcds_between_indices_inclusively(l, r);
             let a_right_gcd = a_cache.get_gcds_between_indices_inclusively(r + 1, n + 1);
-            let b_mid_gcd = b_cache.get_gcds_between_indices_inclusively(l, r);
+            let mut a_gcd = gcd(a_left_gcd, a_right_gcd);
+            if a_gcd > 0 && b_left_gcd > 0 && a_gcd + b_left_gcd < best_sum_of_gcds {
+                continue;
+            }
+            
             let b_right_gcd = b_cache.get_gcds_between_indices_inclusively(r + 1, n + 1);
-            let sum_of_gcds = gcd(a_left_gcd, gcd(b_mid_gcd, a_right_gcd))
-                + gcd(b_left_gcd, gcd(a_mid_gcd, b_right_gcd));
+            let mut b_gcd = gcd(b_left_gcd, b_right_gcd);
+            if a_gcd > 0 && b_gcd > 0 && a_gcd + b_gcd < best_sum_of_gcds {
+                continue;
+            }
+            
+            let b_mid_gcd = b_cache.get_gcds_between_indices_inclusively(l, r);
+            a_gcd = gcd(a_gcd, b_mid_gcd);
+            if b_gcd > 0 && a_gcd + b_gcd < best_sum_of_gcds {
+                continue;
+            }
+            
+            let a_mid_gcd = a_cache.get_gcds_between_indices_inclusively(l, r);
+            b_gcd = gcd(b_gcd, a_mid_gcd);
+            let sum_of_gcds = a_gcd + b_gcd;
+            
             match sum_of_gcds.cmp(&best_sum_of_gcds) {
                 Ordering::Less => {}
                 Ordering::Equal => { best_count += 1; }
@@ -132,12 +154,20 @@ impl Cache {
         if left % 2 == 1 {
             // Take this gcd on its own, then combine all remaining gcd's recursively
             let left_gcd = level[left];
+            // Once a gcd is 1, it can't get any lower, so skip further calculations
+            if left_gcd == 1 {
+                return 1;
+            }
             let rem_gcd = self.get_gcds_between_indices_at_level(level_index, left + 1, right);
             return gcd(left_gcd, rem_gcd);
         }
         if right % 2 == 0 {
             // Take this gcd on its own, then combine all remaining gcd's recursively
             let right_gcd = level[right];
+            // Once a gcd is 1, it can't get any lower, so skip further calculations
+            if right_gcd == 1 {
+                return 1;
+            }
             let rem_gcd = self.get_gcds_between_indices_at_level(level_index, left, right - 1);
             return gcd(rem_gcd, right_gcd);
         }
