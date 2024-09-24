@@ -14,7 +14,7 @@ fn main() {
         .unwrap();
     for _ in 0..t {
         let n: usize = line_iter.next().unwrap().unwrap().parse::<usize>().unwrap();
-
+        
         // Prepend and append zeroes to both sets of numbers, to eliminate the edge case
         // of empty sets on the left and right, and to make the numbers one-based...
         let a: Vec<u32> = std::iter::once(0)
@@ -42,7 +42,7 @@ fn main() {
             .collect();
         
         let (solution, solution_count) = solve(n, a, b);
-
+        
         println!("{solution} {solution_count}");
     }
 }
@@ -82,8 +82,6 @@ fn solve(n: usize, a: Vec<u32>, b: Vec<u32>) -> (u32, usize) {
     let left_iter = a_left_gcds.iter().cloned().zip(b_left_gcds.iter().cloned()).enumerate();
     let right_iter = a_right_gcds.iter().cloned().zip(b_right_gcds.iter().cloned()).enumerate();
     
-    let cache = Cache::new(&a, &b);
-    
     let mut best_sum_of_gcds = 0;
     let mut best_count: usize = 0;
     
@@ -110,7 +108,14 @@ fn solve(n: usize, a: Vec<u32>, b: Vec<u32>) -> (u32, usize) {
                 continue;
             }
             
-            let (a_mid_gcd, b_mid_gcd) = cache.get_gcds_between_indices_inclusively(l, r);
+            let mut a_mid_gcd = 0;
+            let mut b_mid_gcd = 0;
+            
+            for i in l..=r {
+                a_mid_gcd = gcd(a_mid_gcd, a[i]);
+                b_mid_gcd = gcd(b_mid_gcd, b[i]);
+            }
+            
             a_gcd = gcd(a_gcd, b_mid_gcd);
             if b_gcd > 0 && a_gcd + b_gcd < best_sum_of_gcds {
                 continue;
@@ -132,91 +137,10 @@ fn solve(n: usize, a: Vec<u32>, b: Vec<u32>) -> (u32, usize) {
     (best_sum_of_gcds, best_count)
 }
 
-struct Cache {
-    pairs_by_level: Vec<Vec<(u32, u32)>>,
-}
-
-impl Cache {
-    fn new(a_values: &[u32], b_values: &[u32]) -> Self {
-        let mut count = a_values.len().max(b_values.len());
-        let level_count = count.ilog2() as usize + 1;
-        let mut pairs_by_level: Vec<Vec<(u32, u32)>> = Vec::with_capacity(level_count);
-        pairs_by_level.push(a_values.iter().zip(b_values.iter()).map(|(&a, &b)| (a, b)).collect());
-        count /= 2;
-        while count != 0 {
-            let prev_values = pairs_by_level.last().unwrap();
-            pairs_by_level.push(
-                prev_values
-                    .chunks(2)
-                    .filter_map(|chunk| {
-                        if chunk.len() == 2 {
-                            Some(
-                                (
-                                    gcd(chunk[0].0, chunk[1].0),
-                                    gcd(chunk[0].1, chunk[1].1),
-                                )
-                            )
-                        } else {
-                            None
-                        }
-                    })
-                    .collect(),
-            );
-            count /= 2;
-        }
-
-        Self { pairs_by_level }
-    }
-
-    fn get_gcds_between_indices_inclusively(&self, left: usize, right: usize) -> (u32, u32) {
-        self.get_gcds_between_indices_at_level(0, left, right)
-    }
-
-    fn get_gcds_between_indices_at_level(
-        &self,
-        level_index: usize,
-        left: usize,
-        right: usize,
-    ) -> (u32, u32) {
-        let level = &self.pairs_by_level[level_index];
-        if left > right {
-            panic!("The left index should never be greater than the right index");
-        }
-        if left >= level.len() {
-            return (0, 0);
-        }
-        if left == right {
-            return level[left];
-        }
-        if left % 2 == 1 {
-            // Take this gcd on its own, then combine all remaining gcd's recursively
-            let left_gcd = level[left];
-            // Once a gcd is 1, it can't get any lower, so skip further calculations
-            if left_gcd == (1, 1) {
-                return left_gcd;
-            }
-            let rem_gcd = self.get_gcds_between_indices_at_level(level_index, left + 1, right);
-            return (gcd(left_gcd.0, rem_gcd.0), gcd(left_gcd.1, rem_gcd.1));
-        }
-        if right % 2 == 0 {
-            // Take this gcd on its own, then combine all remaining gcd's recursively
-            let right_gcd = level[right];
-            // Once a gcd is 1, it can't get any lower, so skip further calculations
-            if right_gcd == (1, 1) {
-                return right_gcd;
-            }
-            let rem_gcd = self.get_gcds_between_indices_at_level(level_index, left, right - 1);
-            return (gcd(rem_gcd.0, right_gcd.0), gcd(rem_gcd.1, right_gcd.1));
-        }
-        // Get cumulative gcd's at the next level down
-        self.get_gcds_between_indices_at_level(level_index + 1, left / 2, right / 2)
-    }
-}
-
 fn gcd(m: u32, n: u32) -> u32 {
     let mut larger = m.max(n);
     let mut smaller = m.min(n);
-
+    
     while smaller != 0 {
         larger %= smaller;
         std::mem::swap(&mut larger, &mut smaller);
