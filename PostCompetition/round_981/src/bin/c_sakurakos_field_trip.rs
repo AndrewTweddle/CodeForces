@@ -25,8 +25,7 @@ fn main() {
 
         // Don't swap the first and the last
         let mut memo: Memo = vec![None; n + 1];
-        let min_disturbance =
-            calculate_min_disturbance(topics[0], topics[n - 1], &topics[1..n - 1], &mut memo);
+        let min_disturbance = calculate_inner_disturbance(&topics, &mut memo);
 
         println!("{min_disturbance}");
     }
