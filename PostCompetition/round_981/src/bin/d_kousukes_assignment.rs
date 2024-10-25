@@ -15,14 +15,14 @@ fn main() {
         .unwrap();
     for _ in 0..t {
         let _n: usize = line_iter.next().unwrap().unwrap().parse::<usize>().unwrap();
-        let cum_sums: Vec<i32> = iter::once(0)
+        let cum_sums: Vec<i64> = iter::once(0)
             .chain(
                 line_iter
                     .next()
                     .unwrap()
                     .unwrap()
                     .split_ascii_whitespace()
-                    .map(|num_str| num_str.parse::<i32>().unwrap()),
+                    .map(|num_str| num_str.parse::<i64>().unwrap()),
             )
             .scan(0, |cum_sum, element| {
                 *cum_sum += element;
@@ -31,7 +31,7 @@ fn main() {
             .collect();
 
         let mut segments: Vec<(usize, usize)> = Vec::new();
-        let mut cum_sum_map = BTreeMap::<i32, Vec<usize>>::new();
+        let mut cum_sum_map = BTreeMap::<i64, Vec<usize>>::new();
 
         for (idx, &cum_sum) in cum_sums.iter().enumerate() {
             let indices = cum_sum_map.entry(cum_sum).or_default();

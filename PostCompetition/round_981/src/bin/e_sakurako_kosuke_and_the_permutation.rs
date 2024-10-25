@@ -24,8 +24,11 @@ fn main() {
             .collect();
         
         // A permutation can be broken into distinct sub-permutations (cycles).
-        // It always takes longer to join cycles together first, then break them into
-        // simple (length 1 or 2) sub-cycles. So each cycle can be calculated independently.
+        // We can then calculate the number of operations to break that cycle down into
+        // simple permutations (of length 1 or 2). One operation breaks out a simple pair.
+        // And one operation will be required to break apart the final cycle of size 3.
+        // There is also no benefit to using an operation to join two odd cycles together first,
+        // and then break into simple sub-cycles. So each cycle can be calculated independently.
         
         let mut total_operations: u32 = 0;
         let mut is_visited = vec![false; n];
