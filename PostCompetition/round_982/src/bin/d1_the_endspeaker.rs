@@ -1,6 +1,7 @@
 use std::io::BufRead;
 
-// Track the minimum cost by the value of k and the number of a values left
+// Track the minimum cost by the number of b values left (which determines k)
+// and the number of a values left.
 // If the vector entry is None, the value has not yet been saved.
 // If the entry's value is None, then there was no solution.
 type Memo = Vec<Vec<Option<Option<usize>>>>;
